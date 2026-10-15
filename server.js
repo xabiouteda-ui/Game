@@ -109,7 +109,7 @@ app.post("/api/score", async (req, res) => {
     if (!run) return res.status(400).json({ error: "Esta partida ya no es válida. Juega otra y guárdala al terminar." });
     if (!Array.isArray(inputs) || inputs.length > 40000) return res.status(400).json({ error: "Partida no válida." });
     for (const x of inputs) {
-      if (!Array.isArray(x) || x.length !== 2 || !Number.isInteger(x[0]) || x[0] < 0 || (x[1] !== "j" && x[1] !== "s"))
+      if (!Array.isArray(x) || x.length !== 2 || !Number.isInteger(x[0]) || x[0] < 0 || (x[1] !== "j" && x[1] !== "r" && x[1] !== "s"))
         return res.status(400).json({ error: "Partida no válida." });
     }
     // The run can't be faster than real time (with a small allowance for timer drift).

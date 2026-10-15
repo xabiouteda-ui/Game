@@ -81,6 +81,17 @@ canvas { display: block; width: 100%; aspect-ratio: 960 / 360; cursor: crosshair
 }
 .overlay h2 { margin: 0; font-family: var(--f-display); font-size: 36px; line-height: 1.1; color: var(--sun); }
 .overlay p { margin: 0; max-width: 54ch; color: var(--muted); }
+.overlay .hint { font-size: 14px; }
+.overlay .hint kbd { color: var(--text); }
+.overlay .best { font-family: var(--f-num); color: var(--sun); min-height: 1.5em; }
+.overlay .record { font-family: var(--f-display); color: var(--teal); font-size: 16px; }
+.overlay .rank { color: var(--sun); font-weight: 600; min-height: 1.5em; }
+.over-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.mute {
+  position: absolute; top: 10px; right: 10px; z-index: 2; padding: 6px 9px; font-size: 16px; line-height: 1;
+  background: rgba(23, 12, 41, .55); border-color: var(--line); color: var(--text);
+}
+.mute:hover { border-color: var(--teal); }
 .final { font-family: var(--f-num); font-weight: 700; font-size: 54px; line-height: 1; font-variant-numeric: tabular-nums; }
 .sub { font-size: 15px; }
 .save { display: flex; flex-direction: column; gap: 6px; align-items: center; }
@@ -167,6 +178,7 @@ ol.board li.me .name { color: var(--pink); }
   .final { font-size: 36px; }
   .game { display: flex; flex-direction: column; }
   .overlay { position: static; background: var(--panel); backdrop-filter: none; }
+  .mute { top: 6px; right: 6px; padding: 4px 7px; font-size: 14px; }
   .controls .tip { margin-left: 0; }
 }
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }

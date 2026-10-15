@@ -40,11 +40,14 @@
     <div class="play">
       <div class="game" id="game">
         <canvas id="cv" tabindex="0" aria-label="Juego Vice Run"></canvas>
+        <button id="btn-mute" class="mute" aria-label="Silenciar" title="Sonido (M)">🔊</button>
 
         <div class="overlay" id="ov-start">
           <h2>Corre por Vice Beach</h2>
-          <p>Vera tiene a media ciudad detrás. Salta los obstáculos, dispara a los polis y aguanta todo lo que puedas: cada vez va más rápido.</p>
+          <p>Vera tiene a media ciudad detrás. Salta conos, coches y vallas, derriba polis y drones, coge monedas y aguanta todo lo que puedas: cada vez va más rápido.</p>
+          <p class="hint">Mantén <kbd>Espacio</kbd> para saltar más alto · derribos seguidos = combo x2, x3, x4</p>
           <button id="btn-start" class="primary">Jugar <kbd>Enter</kbd></button>
+          <p class="best" id="start-best"></p>
         </div>
 
         <div class="overlay" id="ov-pause" hidden>
@@ -54,8 +57,10 @@
 
         <div class="overlay" id="ov-over" hidden>
           <h2>¡Te han pillado!</h2>
+          <p class="record" id="final-record" hidden>¡Nuevo récord personal!</p>
           <div class="final" id="final">0</div>
           <p class="sub" id="final-sub"></p>
+          <p class="rank" id="final-rank"></p>
           <form class="save" id="save-form" novalidate>
             <label for="handle">Tu usuario de X para el ranking</label>
             <div class="save-row">
@@ -64,15 +69,19 @@
             </div>
           </form>
           <p class="msg" id="save-msg" aria-live="polite"></p>
-          <button id="btn-again" class="ghost">Otra partida <kbd>Enter</kbd></button>
+          <div class="over-actions">
+            <button id="btn-again" class="ghost">Otra partida <kbd>R</kbd></button>
+            <button id="btn-share" class="ghost">Compartir en X</button>
+          </div>
         </div>
       </div>
 
       <div class="controls">
-        <span><kbd>Espacio</kbd> saltar</span>
+        <span><kbd>Espacio</kbd> saltar (mantén = más alto)</span>
         <span><kbd>F</kbd> o clic disparar</span>
         <span><kbd>P</kbd> pausa</span>
-        <span class="tip">Solo los polis caen a tiros. Conos y coches, a saltarlos.</span>
+        <span><kbd>M</kbd> sonido</span>
+        <span class="tip">Polis y drones caen a tiros. Conos, coches y vallas, a saltarlos.</span>
       </div>
       <div class="pad" id="pad">
         <button id="b-jump" class="ghost">Saltar</button>
@@ -123,6 +132,7 @@
 
 <script src="config.js"></script>
 <script src="game-core.js"></script>
+<script src="sound.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
