@@ -3,7 +3,7 @@
   const Core = window.ViceCore;
   const Snd = window.ViceSound;
   const $ = (id) => document.getElementById(id);
-  const fmt = (n) => Number(n).toLocaleString("es-ES");
+  const fmt = (n) => Number(n).toLocaleString("en-US");
   const store = {
     get(k) { try { return localStorage.getItem(k); } catch { return null; } },
     set(k, v) { try { localStorage.setItem(k, v); } catch {} },
@@ -17,7 +17,7 @@
   if (C.buyUrl) { $("buy-link").href = C.buyUrl; $("buy-link").hidden = false; }
   $("btn-copy").hidden = !C.ca;
   $("btn-copy").addEventListener("click", async () => {
-    try { await navigator.clipboard.writeText(C.ca); $("btn-copy").textContent = "Copiado"; setTimeout(() => ($("btn-copy").textContent = "Copiar"), 1500); }
+    try { await navigator.clipboard.writeText(C.ca); $("btn-copy").textContent = "Copied"; setTimeout(() => ($("btn-copy").textContent = "Copy"), 1500); }
     catch { const r = document.createRange(); r.selectNodeContents($("ca")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); }
   });
 
@@ -26,7 +26,7 @@
   const pad2 = (n) => String(n).padStart(2, "0");
   (function tick() {
     let t = target - Date.now();
-    if (t <= 0) { $("digits").innerHTML = '<span class="released">¡Ya está aquí!</span>'; return; }
+    if (t <= 0) { $("digits").innerHTML = '<span class="released">It\'s here!</span>'; return; }
     const d = Math.floor(t / 864e5); t -= d * 864e5;
     const h = Math.floor(t / 36e5); t -= h * 36e5;
     const m = Math.floor(t / 6e4); t -= m * 6e4;
@@ -68,7 +68,7 @@
 
   function showBest() {
     const b = best();
-    $("start-best").textContent = b ? `Tu récord: ${fmt(b)}` : "";
+    $("start-best").textContent = b ? `Your best: ${fmt(b)}` : "";
   }
   showBest();
 
@@ -107,9 +107,9 @@
     if (!sc) return "";
     const me = myHandle();
     const ahead = topRows.filter((r) => r.score > sc && r.handle.toLowerCase() !== me).length;
-    if (ahead === 0) return "Con esta partida irías el Nº 1 del ranking.";
-    if (ahead < 20) return `Con esta partida irías el ${ahead + 1}º del ranking.`;
-    return `El 20º del ranking tiene ${fmt(topRows[topRows.length - 1].score)}. ¡Tú puedes!`;
+    if (ahead === 0) return "This run would put you #1 on the leaderboard.";
+    if (ahead < 20) return `This run would put you #${ahead + 1} on the leaderboard.`;
+    return `#20 on the leaderboard has ${fmt(topRows[topRows.length - 1].score)}. You can do it!`;
   }
 
   function gameOver() {
@@ -121,12 +121,12 @@
     $("final").textContent = fmt(sc);
     $("final-record").hidden = !(sc > prev && prev > 0);
     $("final-sub").textContent =
-      `${fmt(S.kills)} derribos · ${fmt(S.coinsTaken)} monedas · tu récord: ${fmt(Math.max(prev, sc))}`;
+      `${fmt(S.kills)} takedowns · ${fmt(S.coinsTaken)} coins · your best: ${fmt(Math.max(prev, sc))}`;
     $("final-rank").textContent = run.token ? projectedRank(sc) : "";
     $("save-msg").textContent = ""; $("save-msg").className = "msg";
     $("btn-save").disabled = !run.token;
     $("save-form").hidden = !run.token || sc === 0;
-    if (!run.token) { $("save-msg").textContent = "Sin conexión con el servidor: esta partida no se puede guardar."; $("save-msg").className = "msg err"; }
+    if (!run.token) { $("save-msg").textContent = "No connection to the server: this run can't be saved."; $("save-msg").className = "msg err"; }
     $("handle").value = store.get("vr-handle") || "";
     showBest();
     setTimeout(() => { $("ov-over").hidden = false; cv.blur(); }, 650);
@@ -135,7 +135,7 @@
   function share() {
     const sc = Core.score(S);
     const tk = C.ticker || "";
-    const txt = `He hecho ${fmt(sc)} puntos en Vice Run 🌴🚓 ¿Me superas? El nº 1 el 19/11 se lleva ${C.prize || "el premio"}. ${tk}`.trim();
+    const txt = `I scored ${fmt(sc)} in Vice Run 🌴🚓 Can you beat me? Whoever is #1 on Nov 19 wins ${C.prize || "the prize"}. ${tk}`.trim();
     const url = "https://x.com/intent/post?text=" + encodeURIComponent(txt) + "&url=" + encodeURIComponent(location.origin);
     window.open(url, "_blank", "noopener");
   }
@@ -150,7 +150,7 @@
   function toggleMute() {
     const m = Snd.toggleMute();
     $("btn-mute").textContent = m ? "🔇" : "🔊";
-    $("btn-mute").setAttribute("aria-label", m ? "Activar sonido" : "Silenciar");
+    $("btn-mute").setAttribute("aria-label", m ? "Unmute" : "Mute");
   }
   $("btn-mute").textContent = Snd.isMuted() ? "🔇" : "🔊";
 
@@ -218,7 +218,7 @@
         S.events.length = 0;
         acc -= TICK;
         const lvl = Core.wanted(S);
-        if (lvl > lastLvl) { lastLvl = lvl; Snd.play("star"); Snd.setIntensity(lvl); floatText(W / 2, 110, "★".repeat(lvl) + "  ¡MÁS PRESIÓN!", "#ffe08a", 22); }
+        if (lvl > lastLvl) { lastLvl = lvl; Snd.play("star"); Snd.setIntensity(lvl); floatText(W / 2, 110, "★".repeat(lvl) + "  HEAT RISING!", "#ffe08a", 22); }
         if (S.over) gameOver();
       }
     }
@@ -445,13 +445,13 @@
     ctx.fillText(String(sc).padStart(6, "0"), 18, 16);
     ctx.font = "500 14px 'Chakra Petch', monospace";
     ctx.fillStyle = "rgba(255,241,230,.75)";
-    ctx.fillText(`DERRIBOS ${S.kills}   MONEDAS ${S.coinsTaken}`, 20, 46);
+    ctx.fillText(`TAKEDOWNS ${S.kills}   COINS ${S.coinsTaken}`, 20, 46);
     // target: the current nº 1 (or your record if the board is empty)
     const leader = topRows[0];
     const goal = leader ? leader.score : best();
     if (goal > 0) {
       ctx.fillStyle = sc > goal ? "#2de2c9" : "rgba(255,241,230,.55)";
-      ctx.fillText(sc > goal ? (leader ? "¡VAS EL Nº 1!" : "¡NUEVO RÉCORD!") : (leader ? "Nº 1: " : "RÉCORD: ") + fmt(goal), 20, 66);
+      ctx.fillText(sc > goal ? (leader ? "YOU'RE #1!" : "NEW BEST!") : (leader ? "#1: " : "BEST: ") + fmt(goal), 20, 66);
     }
     // combo timer bar
     const since = S.tick - S.lastKillTick;
@@ -460,7 +460,7 @@
       ctx.fillStyle = "rgba(255,241,230,.15)"; ctx.fillRect(W / 2 - 60, 18, 120, 6);
       ctx.fillStyle = "#ff4fa3"; ctx.fillRect(W / 2 - 60, 18, 120 * frac, 6);
       ctx.textAlign = "center"; ctx.font = "700 14px 'Chakra Petch', monospace";
-      ctx.fillStyle = "#ff4fa3"; ctx.fillText("COMBO x" + Math.min(4, S.combo + 1) + " SI DERRIBAS OTRO", W / 2, 28);
+      ctx.fillStyle = "#ff4fa3"; ctx.fillText("COMBO x" + Math.min(4, S.combo + 1) + " ON NEXT TAKEDOWN", W / 2, 28);
     }
     const lvl = Core.wanted(S);
     ctx.textAlign = "right";
@@ -513,7 +513,7 @@
       topRows = rows;
       const ol = $("board"); ol.textContent = "";
       $("board-empty").hidden = rows.length > 0;
-      $("board-empty").textContent = "Todavía no hay puntuaciones. Juega y ponte el primero.";
+      $("board-empty").textContent = "No scores yet. Play and take the top spot.";
       rows.forEach((row, i) => {
         const li = document.createElement("li");
         if (i === 0) li.classList.add("first");
@@ -525,7 +525,7 @@
       });
     } catch {
       $("board-empty").hidden = false;
-      $("board-empty").textContent = "No se pudo cargar el ranking. Se reintentará solo.";
+      $("board-empty").textContent = "Couldn't load the leaderboard. Retrying automatically.";
     }
   }
   loadTop();
@@ -537,28 +537,28 @@
     const msg = $("save-msg"), btn = $("btn-save");
     const raw = $("handle").value.trim();
     const m = raw.match(/^@?([A-Za-z0-9_]{1,15})$/);
-    if (!m) { msg.textContent = "Escribe tu usuario de X, por ejemplo @tuusuario."; msg.className = "msg err"; $("handle").focus(); return; }
+    if (!m) { msg.textContent = "Enter your X handle, e.g. @yourhandle."; msg.className = "msg err"; $("handle").focus(); return; }
     if (!run.token) return;
-    btn.disabled = true; msg.textContent = "Comprobando la partida…"; msg.className = "msg";
+    btn.disabled = true; msg.textContent = "Verifying your run…"; msg.className = "msg";
     try {
       const r = await fetch("/api/score", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token: run.token, handle: "@" + m[1], inputs: run.inputs, ticks: S.tick, score: Core.score(S) }),
       });
       const j = await r.json().catch(() => ({}));
-      if (!r.ok) { msg.textContent = j.error || "No se pudo guardar."; msg.className = "msg err"; btn.disabled = false; return; }
+      if (!r.ok) { msg.textContent = j.error || "Couldn't save."; msg.className = "msg err"; btn.disabled = false; return; }
       store.set("vr-handle", "@" + m[1]);
       run.token = null;
       msg.textContent = j.improved
-        ? `Guardado. Vas el ${j.rank}º del ranking.`
-        : `Tu récord sigue siendo ${fmt(j.best)} (puesto ${j.rank}).`;
+        ? `Saved. You're #${j.rank} on the leaderboard.`
+        : `Your best is still ${fmt(j.best)} (#${j.rank}).`;
       msg.className = "msg ok";
       $("save-form").hidden = true;
       $("final-rank").textContent = "";
       $("btn-again").focus();
       loadTop();
     } catch {
-      msg.textContent = "Sin conexión. Inténtalo otra vez."; msg.className = "msg err"; btn.disabled = false;
+      msg.textContent = "No connection. Try again."; msg.className = "msg err"; btn.disabled = false;
     }
   });
 

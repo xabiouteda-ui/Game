@@ -55,7 +55,7 @@ if (process.env.DATABASE_URL) {
   let rows = {};
   const save = () => { fs.mkdirSync(path.dirname(file), { recursive: true }); fs.writeFileSync(file, JSON.stringify(rows)); };
   store = {
-    async init() { try { rows = JSON.parse(fs.readFileSync(file, "utf8")); } catch { rows = {}; } console.log("Sin DATABASE_URL: guardando en data/scores.json (solo para pruebas)"); },
+    async init() { try { rows = JSON.parse(fs.readFileSync(file, "utf8")); } catch { rows = {}; } console.log("No DATABASE_URL: saving to data/scores.json (testing only)"); },
     async top(n) {
       return Object.values(rows).sort((a, b) => b.score - a.score || a.at - b.at).slice(0, n)
         .map((x) => ({ handle: x.display, score: x.score, kills: x.kills, at: new Date(x.at) }));
@@ -91,8 +91,8 @@ setInterval(() => hits.clear(), 10 * 60 * 1000).unref();
 const HANDLE_RE = /^@?([A-Za-z0-9_]{1,15})$/;
 
 app.post("/api/start", (req, res) => {
-  if (limited(req.ip, "start", 40)) return res.status(429).json({ error: "Demasiadas partidas seguidas. Espera un minuto." });
-  if (runs.size > 50000) return res.status(503).json({ error: "Servidor ocupado, prueba en un momento." });
+  if (limited(req.ip, "start", 40)) return res.status(429).json({ error: "Too many runs in a row. Wait a minute." });
+  if (runs.size > 50000) return res.status(503).json({ error: "Server busy, try again in a moment." });
   const token = crypto.randomBytes(16).toString("hex");
   const seed = crypto.randomBytes(4).readUInt32BE(0);
   runs.set(token, { seed, started: Date.now(), ip: req.ip });
@@ -101,23 +101,23 @@ app.post("/api/start", (req, res) => {
 
 app.post("/api/score", async (req, res) => {
   try {
-    if (limited(req.ip, "score", 15)) return res.status(429).json({ error: "Demasiados envíos. Espera un minuto." });
+    if (limited(req.ip, "score", 15)) return res.status(429).json({ error: "Too many submissions. Wait a minute." });
     const { token, handle, inputs, ticks, score } = req.body || {};
     const m = typeof handle === "string" && handle.trim().match(HANDLE_RE);
-    if (!m) return res.status(400).json({ error: "Escribe tu usuario de X, por ejemplo @tuusuario (solo letras, números y _)." });
+    if (!m) return res.status(400).json({ error: "Enter your X handle, e.g. @yourhandle (letters, numbers and _ only)." });
     const run = typeof token === "string" && runs.get(token);
-    if (!run) return res.status(400).json({ error: "Esta partida ya no es válida. Juega otra y guárdala al terminar." });
-    if (!Array.isArray(inputs) || inputs.length > 40000) return res.status(400).json({ error: "Partida no válida." });
+    if (!run) return res.status(400).json({ error: "This run is no longer valid. Play another one and save it when you finish." });
+    if (!Array.isArray(inputs) || inputs.length > 40000) return res.status(400).json({ error: "Invalid run." });
     for (const x of inputs) {
       if (!Array.isArray(x) || x.length !== 2 || !Number.isInteger(x[0]) || x[0] < 0 || (x[1] !== "j" && x[1] !== "r" && x[1] !== "s"))
-        return res.status(400).json({ error: "Partida no válida." });
+        return res.status(400).json({ error: "Invalid run." });
     }
     // The run can't be faster than real time (with a small allowance for timer drift).
     const elapsedTicks = ((Date.now() - run.started) / 1000) * Core.TICKS_PER_SEC;
     const result = Core.replay(run.seed, inputs);
     if (!result.valid || result.ticks !== ticks || result.score !== score || result.ticks > elapsedTicks * 1.05 + 30) {
       runs.delete(token);
-      return res.status(400).json({ error: "No hemos podido verificar esta partida, así que no entra en el ranking." });
+      return res.status(400).json({ error: "We couldn't verify this run, so it won't enter the leaderboard." });
     }
     runs.delete(token);
     const out = await store.submit({
@@ -128,7 +128,7 @@ app.post("/api/score", async (req, res) => {
     res.json(out);
   } catch (e) {
     console.error(e);
-    res.status(500).json({ error: "No se pudo guardar. Inténtalo otra vez." });
+    res.status(500).json({ error: "Couldn't save. Try again." });
   }
 });
 

@@ -141,7 +141,7 @@ ol.board li:last-child { border-bottom: 0; }
 .pts { font-family: var(--f-num); font-weight: 700; font-variant-numeric: tabular-nums; }
 ol.board li.first { padding: 10px 0; }
 ol.board li.first .pos, ol.board li.first .pts { color: var(--sun); }
-ol.board li.first .name::after { content: "premio"; display: inline-block; margin-left: 8px; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--sun); }
+ol.board li.first .name::after { content: "prize"; display: inline-block; margin-left: 8px; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--sun); }
 ol.board li.me .name { color: var(--pink); }
 .empty { margin: 0; color: var(--muted); font-size: 14px; }
 
